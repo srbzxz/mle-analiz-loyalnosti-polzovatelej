@@ -144,6 +144,10 @@ ENV/
 env.bak/
 venv.bak/
 
+# Project data (raw datasets, downloaded files)
+data/*
+!data/README.md
+
 # Spyder project settings
 .spyderproject
 .spyproject
