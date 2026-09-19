@@ -6,6 +6,7 @@ import pandas as pd
 from scipy import stats
 from sqlalchemy import create_engine
 from statsmodels.stats.proportion import proportions_ztest
+from phik import phik_matrix
 
 ORDERS_QUERY = '''
 SELECT p.user_id,
@@ -235,18 +236,18 @@ class DataProcessor:
         phik_cols = ['first_device', 'first_region', 'first_event_type',
                      'first_order_weekday', 'avg_revenue_rub', 'total_orders']
         interval_cols = ['avg_revenue_rub', 'total_orders']
-        phik_matrix = profile[phik_cols].phik_matrix(interval_cols=interval_cols)
+        phik_matrix_res = phik_matrix(profile[phik_cols], interval_cols=interval_cols)
 
         seg_cols = ['first_device', 'first_region', 'first_event_type',
                     'first_order_weekday', 'avg_revenue_rub', 'orders_segment']
-        phik_matrix_seg = profile[seg_cols].phik_matrix(interval_cols=['avg_revenue_rub'])
+        phik_matrix_seg = phik_matrix(profile[seg_cols], interval_cols=['avg_revenue_rub'])
 
         returning_profile = profile[profile['total_orders'] >= 2].copy()
         history_cols = ['avg_days_between', 'total_orders']
         phik_history = returning_profile[history_cols].phik_matrix(interval_cols=history_cols)
 
         return {
-            'phik_matrix': phik_matrix,
+            'phik_matrix': phik_matrix_res,
             'phik_matrix_segmented': phik_matrix_seg,
             'phik_history': phik_history,
         }
